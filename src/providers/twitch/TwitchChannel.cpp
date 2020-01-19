@@ -207,6 +207,7 @@ bool TwitchChannel::canSendMessage() const
 
 void TwitchChannel::refreshBTTVChannelEmotes(bool manualRefresh)
 {
+    log("Loading bttv channel emote with channelId {}", this->roomId());
     BttvEmotes::loadChannel(
         weakOf<Channel>(this), this->roomId(), this->getName(),
         [this, weak = weakOf<Channel>(this)](auto &&emoteMap) {

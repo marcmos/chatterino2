@@ -2,6 +2,9 @@
 
 #include "providers/irc/AbstractIrcServer.hpp"
 #include "providers/irc/IrcAccount.hpp"
+#include "providers/bttv/BttvEmotes.hpp"
+#include "common/Atomic.hpp"
+#include "messages/Emote.hpp"
 
 namespace chatterino {
 
@@ -19,6 +22,9 @@ public:
     const QString &user();
     const QString &nick();
 
+    const BttvEmotes &bttv() { return bttv_; }
+    const std::shared_ptr<const EmoteMap> &bttvChannel() { return bttvChannel_; }
+
     // AbstractIrcServer interface
 protected:
     void initializeConnectionSignals(IrcConnection *connection,
@@ -35,6 +41,9 @@ protected:
 private:
     // pointer so we don't have to circle include Irc2.hpp
     IrcServerData *data_;
+    BttvEmotes bttv_;
+    // Atomic<std::shared_ptr<const EmoteMap>> bttvChannel_;
+    std::shared_ptr<const EmoteMap> bttvChannel_;
 };
 
 }  // namespace chatterino

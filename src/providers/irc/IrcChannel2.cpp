@@ -14,6 +14,57 @@ IrcChannel::IrcChannel(const QString &name, IrcServer *server)
 {
 }
 
+  /////////////////////////////////////////////// mmos
+  boost::optional<std::unique_ptr<EmoteElement>> IrcChannel::bttvEmote(const QString &word) {
+    if (this->server() == nullptr) {
+      return boost::none;
+    } else {
+      const BttvEmotes& bttv = this->server()->bttv();
+      auto emote = bttv.emote({word});
+      if (emote) {
+        auto flags = MessageElementFlag::BttvEmote;
+        return std::make_unique<EmoteElement>(emote.get(), flags);
+      } else {
+        return boost::none;
+      }
+    }
+  }
+
+  // skopiowane z TwitchChannel::bttvEmote
+  boost::optional<EmotePtr> IrcChannel::bttvEmotex(const EmoteName &name)
+  {
+    auto emotes = this->server()->bttvChannel();
+    auto it = emotes->find(name);
+
+    if (it == emotes->end())
+      return boost::none;
+    return it->second;
+  }
+
+  void IrcChannel::addMessageContent(MessageBuilder& builder, const QString& message) {
+    QStringList words = message.split(' ');
+    for (auto word : words) {
+      auto emote = bttvEmote(word);
+      auto bttvChannelEmote = bttvEmotex(EmoteName{word});
+      if (bttvChannelEmote) {
+        builder.append(std::move(std::make_unique<EmoteElement>(bttvChannelEmote.get(), MessageElementFlag::BttvEmote)));
+      } else if (emote) {
+        builder.append(std::move(emote.get()));
+      } else {
+        builder.emplace<TextElement>(word, MessageElementFlag::Text);
+      }
+    }
+  }
+
+  MessagePtr IrcChannel::buildMessage(const QString &nick, const QString &message) {
+    MessageBuilder builder;
+    builder.emplace<TimestampElement>();
+    builder.emplace<TextElement>(nick + ":", MessageElementFlag::Username);
+    addMessageContent(builder, message);
+    return builder.release();
+  }
+  /////////////////////////////////////////////// mmos
+
 void IrcChannel::sendMessage(const QString &message)
 {
     assertInGuiThread();
@@ -31,12 +82,12 @@ void IrcChannel::sendMessage(const QString &message)
         if (this->server())
             this->server()->sendMessage(this->getName(), message);
 
-        MessageBuilder builder;
-        builder.emplace<TimestampElement>();
-        builder.emplace<TextElement>(this->server()->nick() + ":",
-                                     MessageElementFlag::Username);
-        builder.emplace<TextElement>(message, MessageElementFlag::Text);
-        this->addMessage(builder.release());
+        // MessageBuilder builder;
+        // builder.emplace<TimestampElement>();
+        // builder.emplace<TextElement>(this->server()->nick() + ":",
+        //                              MessageElementFlag::Username);
+        // builder.emplace<TextElement>(message, MessageElementFlag::Text);
+        this->addMessage(buildMessage(this->server()->nick(), message));
     }
 }
 
