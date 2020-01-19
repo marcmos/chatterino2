@@ -3,6 +3,10 @@
 #include "common/Channel.hpp"
 #include "common/ChannelChatters.hpp"
 
+#include "messages/MessageBuilder.hpp"
+#include "messages/MessageElement.hpp"
+#include "messages/Emote.hpp"
+
 namespace chatterino {
 
 class Irc;
@@ -22,8 +26,13 @@ public:
     virtual bool canReconnect() const override;
     virtual void reconnect() override;
 
+  void addMessageContent(MessageBuilder& builder, const QString& message);
 private:
     void setServer(IrcServer *server);
+    boost::optional<std::unique_ptr<EmoteElement>> bttvEmote(const QString &word);
+
+  MessagePtr buildMessage(const QString &nick, const QString &message);
+  boost::optional<EmotePtr> bttvEmotex(const EmoteName &name);
 
     IrcServer *server_;
 

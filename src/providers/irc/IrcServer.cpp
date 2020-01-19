@@ -54,6 +54,14 @@ const QString &IrcServer::nick()
 void IrcServer::initializeConnection(IrcConnection *connection,
                                      ConnectionType type)
 {
+    this->bttv_.loadEmotes();
+    QString forsenChannelId = QString("22484632");
+    BttvEmotes::loadChannel(
+                            forsenChannelId, [this](auto &&emoteMap) {
+                                               bttvChannel_ = std::make_shared<EmoteMap>(std::move(emoteMap));
+                              // this->bttvChannel_.set(std::make_shared<EmoteMap>(std::move(emoteMap)));
+                            });
+
     assert(type == Both);
 
     connection->setSecure(this->data_->ssl);
@@ -160,7 +168,7 @@ void IrcServer::onReadConnected(IrcConnection *connection)
 void IrcServer::privateMessageReceived(Communi::IrcPrivateMessage *message)
 {
     auto target = message->target();
-    target = target.startsWith('#') ? target.mid(1) : target;
+    // target = target.startsWith('#') ? target.mid(1) : target;
 
     if (auto channel = this->getChannelOrEmpty(target); !channel->isEmpty())
     {
@@ -169,8 +177,9 @@ void IrcServer::privateMessageReceived(Communi::IrcPrivateMessage *message)
         builder.emplace<TimestampElement>();
         builder.emplace<TextElement>(message->nick() + ":",
                                      MessageElementFlag::Username);
-        builder.emplace<TextElement>(message->content(),
-                                     MessageElementFlag::Text);
+        std::static_pointer_cast<IrcChannel>(channel)->addMessageContent(builder, message->content());
+        // builder.emplace<TextElement>(message->content(),
+                                     // MessageElementFlag::Text);
 
         channel->addMessage(builder.release());
     }
