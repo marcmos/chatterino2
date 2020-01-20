@@ -57,6 +57,7 @@ void IrcServer::initializeConnectionSignals(IrcConnection *connection,
                                             ConnectionType type)
 {
     this->bttv_.loadEmotes();
+    this->ffzEmotes_.loadEmotes();
     QString forsenChannelId = QString("22484632");
     BttvEmotes::loadChannel(
                             forsenChannelId, [this](auto &&emoteMap) {

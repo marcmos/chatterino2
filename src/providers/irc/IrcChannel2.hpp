@@ -30,6 +30,7 @@ public:
 private:
     void setServer(IrcServer *server);
     boost::optional<std::unique_ptr<EmoteElement>> bttvEmote(const QString &word);
+    boost::optional<std::unique_ptr<EmoteElement>> ffzEmote(const QString &word);
 
   MessagePtr buildMessage(const QString &nick, const QString &message);
   boost::optional<EmotePtr> bttvEmotex(const EmoteName &name);

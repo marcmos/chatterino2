@@ -3,6 +3,7 @@
 #include "providers/irc/AbstractIrcServer.hpp"
 #include "providers/irc/IrcAccount.hpp"
 #include "providers/bttv/BttvEmotes.hpp"
+#include "providers/ffz/FfzEmotes.hpp"
 #include "common/Atomic.hpp"
 #include "messages/Emote.hpp"
 
@@ -24,6 +25,7 @@ public:
 
     const BttvEmotes &bttv() { return bttv_; }
     const std::shared_ptr<const EmoteMap> &bttvChannel() { return bttvChannel_; }
+    const FfzEmotes &ffz() { return ffzEmotes_; }
 
     // AbstractIrcServer interface
 protected:
@@ -42,6 +44,7 @@ private:
     // pointer so we don't have to circle include Irc2.hpp
     IrcServerData *data_;
     BttvEmotes bttv_;
+    FfzEmotes ffzEmotes_;
     // Atomic<std::shared_ptr<const EmoteMap>> bttvChannel_;
     std::shared_ptr<const EmoteMap> bttvChannel_;
 };
