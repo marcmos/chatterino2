@@ -34,6 +34,7 @@ private:
 
   MessagePtr buildMessage(const QString &nick, const QString &message);
   boost::optional<EmotePtr> bttvEmotex(const EmoteName &name);
+  boost::optional<EmotePtr> ffzChannelEmote(const EmoteName &name);
 
     IrcServer *server_;
 

@@ -25,6 +25,7 @@ public:
 
     const BttvEmotes &bttv() { return bttv_; }
     const std::shared_ptr<const EmoteMap> &bttvChannel() { return bttvChannel_; }
+    const std::shared_ptr<const EmoteMap> &ffzChannel() { return ffzChannel_; }
     const FfzEmotes &ffz() { return ffzEmotes_; }
 
     // AbstractIrcServer interface
@@ -45,6 +46,7 @@ private:
     FfzEmotes ffzEmotes_;
     // Atomic<std::shared_ptr<const EmoteMap>> bttvChannel_;
     std::shared_ptr<const EmoteMap> bttvChannel_;
+    std::shared_ptr<const EmoteMap> ffzChannel_;
 };
 
 }  // namespace chatterino
