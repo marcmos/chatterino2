@@ -56,14 +56,28 @@ IrcChannel::IrcChannel(const QString &name, IrcServer *server)
     return it->second;
   }
 
+  boost::optional<EmotePtr> IrcChannel::ffzChannelEmote(const EmoteName &name)
+  {
+    auto emotes = this->server()->ffzChannel();
+    auto it = emotes->find(name);
+
+    if (it == emotes->end())
+      return boost::none;
+    return it->second;
+  }
+
+
   void IrcChannel::addMessageContent(MessageBuilder& builder, const QString& message) {
     QStringList words = message.split(' ');
     for (auto word : words) {
       auto emote = bttvEmote(word);
       auto ffzGlobalEmote = ffzEmote(word);
       auto bttvChannelEmote = bttvEmotex(EmoteName{word});
+      auto ffzChanEmote = ffzChannelEmote(EmoteName{word});
       if (bttvChannelEmote) {
         builder.append(std::move(std::make_unique<EmoteElement>(bttvChannelEmote.get(), MessageElementFlag::BttvEmote)));
+      } else if (ffzChanEmote) {
+        builder.append(std::move(std::make_unique<EmoteElement>(ffzChanEmote.get(), MessageElementFlag::FfzEmote)));
       } else if (emote) {
         builder.append(std::move(emote.get()));
       } else if (ffzGlobalEmote) {

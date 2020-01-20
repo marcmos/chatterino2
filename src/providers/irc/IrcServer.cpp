@@ -64,6 +64,9 @@ void IrcServer::initializeConnectionSignals(IrcConnection *connection,
                                                bttvChannel_ = std::make_shared<EmoteMap>(std::move(emoteMap));
                               // this->bttvChannel_.set(std::make_shared<EmoteMap>(std::move(emoteMap)));
                             });
+    FfzEmotes::loadChannel(forsenChannelId, [this](auto &&emoteMap) {
+                                              ffzChannel_ = std::make_shared<EmoteMap>(std::move(emoteMap));
+                                            }, [this](auto emotePtr) { return; });
 
     assert(type == Both);
 
