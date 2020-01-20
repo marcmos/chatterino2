@@ -30,6 +30,21 @@ IrcChannel::IrcChannel(const QString &name, IrcServer *server)
     }
   }
 
+  boost::optional<std::unique_ptr<EmoteElement>> IrcChannel::ffzEmote(const QString &word) {
+    if (this->server() == nullptr) {
+      return boost::none;
+    } else {
+      const FfzEmotes& bttv = this->server()->ffz();
+      auto emote = bttv.emote({word});
+      if (emote) {
+        auto flags = MessageElementFlag::FfzEmote;
+        return std::make_unique<EmoteElement>(emote.get(), flags);
+      } else {
+        return boost::none;
+      }
+    }
+  }
+
   // skopiowane z TwitchChannel::bttvEmote
   boost::optional<EmotePtr> IrcChannel::bttvEmotex(const EmoteName &name)
   {
@@ -45,11 +60,14 @@ IrcChannel::IrcChannel(const QString &name, IrcServer *server)
     QStringList words = message.split(' ');
     for (auto word : words) {
       auto emote = bttvEmote(word);
+      auto ffzGlobalEmote = ffzEmote(word);
       auto bttvChannelEmote = bttvEmotex(EmoteName{word});
       if (bttvChannelEmote) {
         builder.append(std::move(std::make_unique<EmoteElement>(bttvChannelEmote.get(), MessageElementFlag::BttvEmote)));
       } else if (emote) {
         builder.append(std::move(emote.get()));
+      } else if (ffzGlobalEmote) {
+        builder.append(std::move(ffzGlobalEmote.get()));
       } else {
         builder.emplace<TextElement>(word, MessageElementFlag::Text);
       }
