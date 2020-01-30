@@ -12,6 +12,7 @@ namespace chatterino {
 class Irc;
 class IrcServer;
 
+
 class IrcChannel : public Channel, public ChannelChatters
 {
 public:
@@ -29,12 +30,8 @@ public:
   void addMessageContent(MessageBuilder& builder, const QString& message);
 private:
     void setServer(IrcServer *server);
-    boost::optional<std::unique_ptr<EmoteElement>> bttvEmote(const QString &word);
-    boost::optional<std::unique_ptr<EmoteElement>> ffzEmote(const QString &word);
 
-  MessagePtr buildMessage(const QString &nick, const QString &message);
-  boost::optional<EmotePtr> bttvEmotex(const EmoteName &name);
-  boost::optional<EmotePtr> ffzChannelEmote(const EmoteName &name);
+    MessagePtr buildMessage(const QString &nick, const QString &message);
 
     IrcServer *server_;
 

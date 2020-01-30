@@ -56,17 +56,10 @@ const QString &IrcServer::nick()
 void IrcServer::initializeConnectionSignals(IrcConnection *connection,
                                             ConnectionType type)
 {
-    this->bttv_.loadEmotes();
-    this->ffzEmotes_.loadEmotes();
-    QString forsenChannelId = QString("22484632");
-    BttvEmotes::loadChannel(
-                            forsenChannelId, [this](auto &&emoteMap) {
-                                               bttvChannel_ = std::make_shared<EmoteMap>(std::move(emoteMap));
-                              // this->bttvChannel_.set(std::make_shared<EmoteMap>(std::move(emoteMap)));
-                            });
-    FfzEmotes::loadChannel(forsenChannelId, [this](auto &&emoteMap) {
-                                              ffzChannel_ = std::make_shared<EmoteMap>(std::move(emoteMap));
-                                            }, [this](auto emotePtr) { return; });
+    std::vector<QString> channelIds = std::vector(
+        {QString("11148817"), QString("22484632"), QString("31400525")});
+    emoteProvider_.refresh();
+    emoteProvider_.loadChannelEmotes(channelIds);
 
     assert(type == Both);
 
