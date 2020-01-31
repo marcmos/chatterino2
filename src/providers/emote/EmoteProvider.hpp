@@ -1,5 +1,6 @@
 #include "providers/bttv/BttvEmotes.hpp"
 #include "providers/ffz/FfzEmotes.hpp"
+#include "providers/emoji/Emojis.hpp"
 #include "messages/MessageElement.hpp"
 #include "messages/Emote.hpp"
 
@@ -11,6 +12,7 @@ public:
     EmoteProvider()
     {
         refresh();
+        emojis_.load();
     };
 
     void refresh()
@@ -51,10 +53,16 @@ public:
         EmoteName emoteName = EmoteName{word};
         boost::optional<EmotePtr> emote;
 
+        auto emoji = emojis_.parse(word);
+        EmotePtr* emojiPtr;
+        if (emoji.size() > 0 && (emojiPtr = boost::get<EmotePtr>(&emoji[0]))) {
+            return std::make_unique<EmoteElement>(*emojiPtr, MessageElementFlag::BttvEmote);
+        }
         for (auto& emoteMap : emoteMaps) {
             if ((emote = lookupEmoteMap(emoteMap.get(), word)))
             {
                 return std::make_unique<EmoteElement>(
+                    // broken tag
                     emote.get(), MessageElementFlag::BttvEmote);
             }
         }
@@ -77,6 +85,7 @@ public:
 private:
     BttvEmotes bttv_;
     FfzEmotes ffz_;
+    Emojis emojis_;
 
     // add mutex guard
     std::list<std::shared_ptr<const EmoteMap>> emoteMaps;
