@@ -4,8 +4,7 @@
 #include "common/ChannelChatters.hpp"
 
 #include "messages/MessageBuilder.hpp"
-#include "messages/MessageElement.hpp"
-#include "messages/Emote.hpp"
+#include "providers/emote/EmoteProvider.hpp"
 
 namespace chatterino {
 
@@ -34,6 +33,7 @@ private:
     MessagePtr buildMessage(const QString &nick, const QString &message);
 
     IrcServer *server_;
+    EmoteProvider emoteProvider_;
 
     friend class Irc;
 };

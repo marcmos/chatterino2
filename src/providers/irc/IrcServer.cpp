@@ -54,11 +54,6 @@ const QString &IrcServer::nick()
 void IrcServer::initializeConnection(IrcConnection *connection,
                                      ConnectionType type)
 {
-    std::vector<QString> channelIds = std::vector(
-        {QString("11148817"), QString("22484632"), QString("31400525")});
-    emoteProvider_.refresh();
-    emoteProvider_.loadChannelEmotes(channelIds);
-
     assert(type == Both);
 
     connection->setSecure(this->data_->ssl);
