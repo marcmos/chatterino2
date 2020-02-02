@@ -12,6 +12,9 @@ IrcChannel::IrcChannel(const QString &name, IrcServer *server)
     , ChannelChatters(*static_cast<Channel *>(this))
     , server_(server)
 {
+    std::vector<QString> channelIds = std::vector(
+        {QString("11148817"), QString("22484632"), QString("31400525")});
+    emoteProvider_.loadChannelEmotes(channelIds);
 }
 
 /////////////////////////////////////////////// mmos
@@ -21,7 +24,7 @@ void IrcChannel::addMessageContent(MessageBuilder &builder,
     QStringList words = message.split(' ');
     for (auto word : words)
     {
-        auto emote = server_->emoteProvider_.tryEmote(word);
+        auto emote = this->emoteProvider_.tryEmote(word);
         if (emote)
         {
             builder.append(std::move(emote.get()));

@@ -1,25 +1,18 @@
+#pragma once
+
 #include "providers/bttv/BttvEmotes.hpp"
 #include "providers/ffz/FfzEmotes.hpp"
 #include "providers/emoji/Emojis.hpp"
 #include "messages/MessageElement.hpp"
 #include "messages/Emote.hpp"
+#include "providers/emote/GlobalEmotes.hpp"
 
 namespace chatterino {
 
 class EmoteProvider
 {
 public:
-    EmoteProvider()
-    {
-        refresh();
-        emojis_.load();
-    };
-
-    void refresh()
-    {
-        bttv_.loadEmotes();
-        ffz_.loadEmotes();
-    }
+    EmoteProvider() {}
 
     void loadChannelEmotes(const std::vector<QString> channelIds)
     {
@@ -48,50 +41,27 @@ public:
         return it->second;
     }
 
-    boost::optional<std::unique_ptr<EmoteElement>> tryEmote(const QString &word)
-    {
-        EmoteName emoteName = EmoteName{word};
-        boost::optional<EmotePtr> emote;
-
-        auto emoji = emojis_.parse(word);
-        EmotePtr* emojiPtr;
-        if (emoji.size() > 0 && (emojiPtr = boost::get<EmotePtr>(&emoji[0]))) {
-            return std::make_unique<EmoteElement>(*emojiPtr, MessageElementFlag::BttvEmote);
-        }
-        for (auto& emoteMap : emoteMaps) {
-            if ((emote = lookupEmoteMap(emoteMap.get(), word)))
-            {
-                return std::make_unique<EmoteElement>(
-                    // broken tag
-                    emote.get(), MessageElementFlag::BttvEmote);
+    boost::optional<std::unique_ptr<EmoteElement>> tryEmote(const QString &word) {
+        if (auto emoteElement = globalEmotes_.emote(word)) {
+            return emoteElement;
+        } else {
+            for (auto& emoteMap : emoteMaps) {
+                if (auto emote = lookupEmoteMap(emoteMap.get(), word))
+                {
+                    return std::make_unique<EmoteElement>(
+                        // broken tag
+                        emote.get(), MessageElementFlag::BttvEmote);
+                }
             }
-        }
-        if ((emote = bttv_.emote(emoteName)))
-        {
-            return std::make_unique<EmoteElement>(
-                emote.get(), MessageElementFlag::BttvEmote);
-        }
-        else if ((emote = ffz_.emote(emoteName)))
-        {
-            return std::make_unique<EmoteElement>(emote.get(),
-                                                  MessageElementFlag::FfzEmote);
-        }
-        else
-        {
             return boost::none;
         }
     }
 
 private:
-    BttvEmotes bttv_;
-    FfzEmotes ffz_;
-    Emojis emojis_;
+    GlobalEmotes globalEmotes_;
 
     // add mutex guard
     std::list<std::shared_ptr<const EmoteMap>> emoteMaps;
-
-    std::shared_ptr<const EmoteMap> bttvChannel_;
-    std::shared_ptr<const EmoteMap> ffzChannel_;
 };
 
 };
