@@ -642,7 +642,7 @@ void WindowManager::encodeChannel(IndirectChannel channel, QJsonObject &obj)
                 {
                     obj.insert("server", ircChannel->server()->id());
                 }
-                obj.insert("channel", ircChannel->getName());
+                obj.insert("channel", "#" + ircChannel->getName());
             }
         }
         break;
