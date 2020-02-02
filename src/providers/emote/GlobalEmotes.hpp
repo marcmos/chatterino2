@@ -7,6 +7,7 @@
 #include "providers/emoji/Emojis.hpp"
 #include "messages/MessageElement.hpp"
 #include "messages/Emote.hpp"
+#include "common/CompletionModel.hpp"
 
 namespace chatterino {
 
@@ -21,7 +22,7 @@ public:
         ffz_.loadEmotes();
     }
 
-    boost::optional<std::unique_ptr<EmoteElement>> emote(const QString &word)
+    boost::optional<std::unique_ptr<EmoteElement>> emote(const QString &word) const
     {
         boost::optional<EmotePtr> emotePtr;
         EmoteName name = EmoteName{word};
@@ -50,6 +51,35 @@ public:
                 return boost::none;
             }
         }
+    }
+
+    std::vector<CompletionModel::TaggedString> words() const
+    {
+        std::vector<CompletionModel::TaggedString> result;
+
+        for (auto &emote : *bttv_.emotes())
+        {
+            result.emplace_back(
+                emote.first.string,
+                CompletionModel::TaggedString::Type::BTTVChannelEmote);
+        }
+
+        for (auto &emote : *ffz_.emotes())
+        {
+            result.emplace_back(
+                emote.first.string,
+                CompletionModel::TaggedString::Type::FFZChannelEmote);
+        }
+
+        // Emojis
+        const auto &emojiShortCodes = emojis_.shortCodes;
+        for (auto &m : emojiShortCodes)
+        {
+            result.emplace_back(":" + m + ":",
+                                CompletionModel::TaggedString::Type::Emoji);
+        }
+
+        return result;
     }
 
 private:

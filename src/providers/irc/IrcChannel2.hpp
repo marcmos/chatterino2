@@ -26,6 +26,8 @@ public:
     virtual bool canReconnect() const override;
     virtual void reconnect() override;
 
+    const EmoteProvider& emoteProvider() { return emoteProvider_; }
+
   void addMessageContent(MessageBuilder& builder, const QString& message);
 private:
     void setServer(IrcServer *server);
