@@ -12,7 +12,9 @@ namespace chatterino {
 class EmoteProvider
 {
 public:
-    EmoteProvider() {}
+    EmoteProvider()
+    {
+    }
 
     void loadChannelEmotes(const std::vector<QString> channelIds)
     {
@@ -33,19 +35,25 @@ public:
     }
 
     boost::optional<EmotePtr> lookupEmoteMap(const EmoteMap *emoteMap,
-                                             const QString &name)
+                                             const QString &name) const
     {
-        auto it = emoteMap->find(EmoteName {name});
+        auto it = emoteMap->find(EmoteName{name});
         if (it == emoteMap->end())
             return boost::none;
         return it->second;
     }
 
-    boost::optional<std::unique_ptr<EmoteElement>> tryEmote(const QString &word) {
-        if (auto emoteElement = globalEmotes_.emote(word)) {
+    boost::optional<std::unique_ptr<EmoteElement>> tryEmote(
+        const QString &word) const
+    {
+        if (auto emoteElement = globalEmotes_.emote(word))
+        {
             return emoteElement;
-        } else {
-            for (auto& emoteMap : emoteMaps) {
+        }
+        else
+        {
+            for (auto &emoteMap : emoteMaps)
+            {
                 if (auto emote = lookupEmoteMap(emoteMap.get(), word))
                 {
                     return std::make_unique<EmoteElement>(
@@ -57,6 +65,19 @@ public:
         }
     }
 
+    std::vector<CompletionModel::TaggedString> words() const
+    {
+        std::vector<CompletionModel::TaggedString> suggestions = globalEmotes_.words();
+        for (auto &emoteMap : emoteMaps) {
+            for (auto &emote : *emoteMap)
+            {
+                suggestions.emplace_back(emote.first.string,
+                          CompletionModel::TaggedString::Type::BTTVGlobalEmote);
+            }
+        }
+        return suggestions;
+    }
+
 private:
     GlobalEmotes globalEmotes_;
 
@@ -64,4 +85,4 @@ private:
     std::list<std::shared_ptr<const EmoteMap>> emoteMaps;
 };
 
-};
+};  // namespace chatterino

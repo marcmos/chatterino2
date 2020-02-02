@@ -12,6 +12,7 @@ class Channel;
 
 class CompletionModel : public QAbstractListModel
 {
+public:
     struct TaggedString {
         enum Type {
             Username,

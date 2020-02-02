@@ -8,6 +8,7 @@
 #include "debug/Benchmark.hpp"
 #include "providers/twitch/TwitchChannel.hpp"
 #include "providers/twitch/TwitchIrcServer.hpp"
+#include "providers/irc/IrcChannel2.hpp"
 #include "singletons/Emotes.hpp"
 #include "singletons/Settings.hpp"
 
@@ -188,6 +189,22 @@ void CompletionModel::refresh(const QString &prefix, bool isFirstWord)
         {
             addString(command, TaggedString::Command);
         }
+    }
+
+    if (auto channel = dynamic_cast<IrcChannel *>(&this->channel_)) {
+        for(auto &word : channel->emoteProvider().words()) {
+            addString(word.string, word.type);
+        }
+
+        addString("marian,", TaggedString::Type::Username);
+        addString("skurwiarz,", TaggedString::Type::Username);
+        addString("maaikel,", TaggedString::Type::Username);
+        addString("nologin_,", TaggedString::Type::Username);
+        addString("oszust,", TaggedString::Type::Username);
+        addString("rpieja,", TaggedString::Type::Username);
+        addString("iungo,", TaggedString::Type::Username);
+        addString("mmos,", TaggedString::Type::Username);
+        addString("maxmati,", TaggedString::Type::Username);
     }
 }
 
