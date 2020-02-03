@@ -22,10 +22,15 @@ void IrcChannel::addMessageContent(MessageBuilder &builder,
                                    const QString &message)
 {
     QStringList words = message.split(' ');
+
     for (auto word : words)
     {
-        auto emote = this->emoteProvider_.tryEmote(word);
-        if (emote)
+        auto linkString = builder.matchLink(word);
+        if (!linkString.isEmpty()) {
+            auto link = Link();
+            builder.addLink(word, linkString);
+        }
+        else if (auto emote = this->emoteProvider_.tryEmote(word))
         {
             builder.append(std::move(emote.get()));
         }
