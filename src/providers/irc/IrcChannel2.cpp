@@ -1,6 +1,7 @@
 #include "IrcChannel2.hpp"
 
 #include "debug/AssertInGuiThread.hpp"
+#include "messages/Message.hpp"
 #include "messages/MessageBuilder.hpp"
 #include "providers/irc/IrcCommands.hpp"
 #include "providers/irc/IrcServer.hpp"
@@ -25,6 +26,9 @@ void IrcChannel::addMessageContent(MessageBuilder &builder,
 
     for (auto word : words)
     {
+        if (word == server()->nick() || word == "@" + server()->nick()) {
+                builder->flags.set(MessageFlag::Highlighted);
+        }
         auto linkString = builder.matchLink(word);
         if (!linkString.isEmpty()) {
             auto link = Link();
