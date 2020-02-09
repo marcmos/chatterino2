@@ -8,6 +8,7 @@
 #include "messages/MessageElement.hpp"
 #include "messages/Emote.hpp"
 #include "common/CompletionModel.hpp"
+#include "CustomEmotes.hpp"
 
 namespace chatterino {
 
@@ -20,6 +21,7 @@ public:
     {
         bttv_.loadEmotes();
         ffz_.loadEmotes();
+        customEmotes_.loadEmotes();
     }
 
     boost::optional<std::unique_ptr<EmoteElement>> emote(const QString &word) const
@@ -30,6 +32,12 @@ public:
         {
             return std::make_unique<EmoteElement>(
                 emotePtr.get(), MessageElementFlag::BttvEmote);
+        }
+        else if ((emotePtr = customEmotes_.emote(name)))
+        {
+            return std::make_unique<EmoteElement>(
+                emotePtr.get(), MessageElementFlag::BttvEmote);
+
         }
         else if ((emotePtr = ffz_.emote(name)))
         {
@@ -64,6 +72,13 @@ public:
                 CompletionModel::TaggedString::Type::BTTVChannelEmote);
         }
 
+        for (auto &emote : *customEmotes_.emotes())
+        {
+            result.emplace_back(
+                emote.first.string,
+                CompletionModel::TaggedString::Type::BTTVChannelEmote);
+        }
+
         for (auto &emote : *ffz_.emotes())
         {
             result.emplace_back(
@@ -86,6 +101,7 @@ private:
     BttvEmotes bttv_;
     FfzEmotes ffz_;
     Emojis &emojis_;
+    CustomEmotes customEmotes_;
 };
 
 }  // namespace chatterino
