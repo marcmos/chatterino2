@@ -26,11 +26,13 @@ void IrcChannel::addMessageContent(MessageBuilder &builder,
 
     for (auto word : words)
     {
-        if (word == server()->nick() || word == "@" + server()->nick()) {
-                builder->flags.set(MessageFlag::Highlighted);
+        if (word == server()->nick() || word == "@" + server()->nick())
+        {
+            builder->flags.set(MessageFlag::Highlighted);
         }
         auto linkString = builder.matchLink(word);
-        if (!linkString.isEmpty()) {
+        if (!linkString.isEmpty())
+        {
             auto link = Link();
             builder.addLink(word, linkString);
         }
@@ -49,7 +51,8 @@ MessagePtr IrcChannel::buildMessage(const QString &nick, const QString &message)
 {
     MessageBuilder builder;
     builder.emplace<TimestampElement>();
-    builder.emplace<TextElement>(nick + ":", MessageElementFlag::Username);
+    builder.emplace<TextElement>(nick + ":", MessageElementFlag::Username,
+                                 QColor("red"), FontStyle::ChatMediumBold);
     addMessageContent(builder, message);
     return builder.release();
 }
