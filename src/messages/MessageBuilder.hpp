@@ -67,9 +67,6 @@ public:
         return pointer;
     }
 
-protected:
-    QColor usernameColor_;
-
 private:
     std::shared_ptr<Message> message_;
 };

@@ -280,7 +280,7 @@ void IrcServer::readConnectionMessageReceived(Communi::IrcMessage *message)
                 MessageBuilder builder;
 
                 builder.emplace<TimestampElement>();
-                builder.emplace<TextElement>(message->toData() + "KURWA???",
+                builder.emplace<TextElement>(message->toData(),
                                              MessageElementFlag::Text);
                 builder->flags.set(MessageFlag::Debug);
 

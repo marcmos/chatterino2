@@ -1,14 +1,16 @@
 #pragma once
 
-#include "providers/irc/AbstractIrcServer.hpp"
-#include "providers/irc/IrcAccount.hpp"
-#include "providers/bttv/BttvEmotes.hpp"
 #include "common/Atomic.hpp"
 #include "messages/Emote.hpp"
+#include "providers/bttv/BttvEmotes.hpp"
+#include "providers/irc/AbstractIrcServer.hpp"
+#include "providers/irc/IrcAccount.hpp"
 
 namespace chatterino {
 
 struct IrcServerData;
+
+QColor getRandomColor(const QString seed);
 
 class IrcServer : public AbstractIrcServer
 {

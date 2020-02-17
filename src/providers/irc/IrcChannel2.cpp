@@ -52,7 +52,8 @@ MessagePtr IrcChannel::buildMessage(const QString &nick, const QString &message)
     MessageBuilder builder;
     builder.emplace<TimestampElement>();
     builder.emplace<TextElement>(nick + ":", MessageElementFlag::Username,
-                                 QColor("red"), FontStyle::ChatMediumBold);
+                                 getRandomColor(nick),
+                                 FontStyle::ChatMediumBold);
     addMessageContent(builder, message);
     return builder.release();
 }
