@@ -70,9 +70,6 @@ public:
         return pointer;
     }
 
-protected:
-    QColor usernameColor_;
-
 private:
     // Helper method that emplaces some text stylized as system text
     // and then appends that text to the QString parameter "toUpdate".
