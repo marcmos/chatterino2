@@ -20,17 +20,19 @@ public:
     {
         for (auto &channelId : channelIds)
         {
-            BttvEmotes::loadChannel(channelId, [this](auto &&emoteMap) {
+            BttvEmotes::loadChannel(std::weak_ptr<Channel>(), channelId, "test", [this](auto &&emoteMap) {
                 emoteMaps.push_back(
                     std::make_shared<EmoteMap>(std::move(emoteMap)));
-            });
+            }, false);
             FfzEmotes::loadChannel(
+	        std::weak_ptr<Channel>(),
                 channelId,
                 [this](auto &&emoteMap) {
                     emoteMaps.push_back(
                         std::make_shared<EmoteMap>(std::move(emoteMap)));
                 },
-                [](auto emotePtr) { return; });
+                [](auto emotePtr) { return; },
+		false);
         }
     }
 
