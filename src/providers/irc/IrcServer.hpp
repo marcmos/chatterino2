@@ -10,7 +10,7 @@ namespace chatterino {
 
 struct IrcServerData;
 
-QColor getRandomColor(const QString seed);
+const QColor& getRandomColor(const QString seed);
 
 class IrcServer : public AbstractIrcServer
 {
@@ -23,6 +23,8 @@ public:
     int id();
     const QString &user();
     const QString &nick();
+
+    static const std::vector<QColor> twitchUsernameColors;
 
     // AbstractIrcServer interface
 protected:

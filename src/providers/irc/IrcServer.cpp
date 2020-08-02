@@ -12,26 +12,26 @@
 
 namespace chatterino {
 
-QColor getRandomColor(const QString seed)
-{
-    static const std::vector<QColor> twitchUsernameColors = {
-        {255, 0, 0},      // Red
-        {0, 0, 255},      // Blue
-        {0, 255, 0},      // Green
-        {178, 34, 34},    // FireBrick
-        {255, 127, 80},   // Coral
-        {154, 205, 50},   // YellowGreen
-        {255, 69, 0},     // OrangeRed
-        {46, 139, 87},    // SeaGreen
-        {218, 165, 32},   // GoldenRod
-        {210, 105, 30},   // Chocolate
-        {95, 158, 160},   // CadetBlue
-        {30, 144, 255},   // DodgerBlue
-        {255, 105, 180},  // HotPink
-        {138, 43, 226},   // BlueViolet
-        {0, 255, 127},    // SpringGreen
-    };
+const std::vector<QColor> IrcServer::twitchUsernameColors = {
+    {255, 0, 0},      // Red
+    {0, 0, 255},      // Blue
+    {0, 255, 0},      // Green
+    {178, 34, 34},    // FireBrick
+    {255, 127, 80},   // Coral
+    {154, 205, 50},   // YellowGreen
+    {255, 69, 0},     // OrangeRed
+    {46, 139, 87},    // SeaGreen
+    {218, 165, 32},   // GoldenRod
+    {210, 105, 30},   // Chocolate
+    {95, 158, 160},   // CadetBlue
+    {30, 144, 255},   // DodgerBlue
+    {255, 105, 180},  // HotPink
+    {138, 43, 226},   // BlueViolet
+    {0, 255, 127},    // SpringGreen
+};
 
+const QColor& getRandomColor(const QString seed)
+{
     int hash = 0;
 
     for (int i = 0; i < seed.length(); i++)
@@ -39,8 +39,8 @@ QColor getRandomColor(const QString seed)
         hash += seed.at(i).toLatin1();
     }
 
-    const auto colorIndex = hash % twitchUsernameColors.size();
-    return twitchUsernameColors[colorIndex];
+    const auto colorIndex = hash % IrcServer::twitchUsernameColors.size();
+    return IrcServer::twitchUsernameColors[colorIndex];
 }
 
 IrcServer::IrcServer(const IrcServerData &data)
@@ -216,12 +216,6 @@ void IrcServer::privateMessageReceived(Communi::IrcPrivateMessage *message)
         if (!builder.isIgnored())
         {
             builder.emplace<TimestampElement>();
-            builder.emplace<TextElement>(message->nick() + ":",
-                                         MessageElementFlag::Username);
-            std::static_pointer_cast<IrcChannel>(channel)->addMessageContent(builder, message->content());
-            // builder.emplace<TextElement>(message->content(),
-                                         // MessageElementFlag::Text);
-
             builder.emplace<TextElement>(
                 message->nick() + ":", MessageElementFlag::Username,
                 getRandomColor(message->nick()), FontStyle::ChatMediumBold);

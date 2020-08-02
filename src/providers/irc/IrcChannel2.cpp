@@ -28,7 +28,7 @@ void IrcChannel::addMessageContent(MessageBuilder &builder,
     {
         if (word == server()->nick() || word == "@" + server()->nick())
         {
-            builder->flags.set(MessageFlag::Highlighted);
+//            builder->flags.set(MessageFlag::Highlighted);
         }
         auto linkString = builder.matchLink(word);
         if (!linkString.isEmpty())

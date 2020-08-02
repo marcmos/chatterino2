@@ -20,7 +20,7 @@ public:
     {
         for (auto &channelId : channelIds)
         {
-            BttvEmotes::loadChannel(std::weak_ptr<Channel>(), channelId, "test", [this](auto &&emoteMap) {
+            BttvEmotes::loadChannel(std::weak_ptr<Channel>(), channelId, qtax, [this](auto &&emoteMap) {
                 emoteMaps.push_back(
                     std::make_shared<EmoteMap>(std::move(emoteMap)));
             }, false);
@@ -82,6 +82,7 @@ public:
 
 private:
     GlobalEmotes globalEmotes_;
+    QString qtax = "test";
 
     // add mutex guard
     std::list<std::shared_ptr<const EmoteMap>> emoteMaps;
